@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>লগইন - DriveHub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>🔐 DriveHub লগইন</h2>
+        
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <label>ইউজারনেম</label>
+                <input type="text" id="username" required>
+            </div>
+            
+            <div class="input-group">
+                <label>পাসওয়ার্ড</label>
+                <input type="password" id="password" required>
+            </div>
+            
+            <button type="submit">লগইন</button>
+        </form>
+        
+        <div class="register-link">
+            নতুন ইউজার? <a href="register.html">রেজিস্টার করুন</a>
+        </div>
+    </div>
+
+    <script>
+        // ইউজার ডাটা লোকাল স্টোরেজে সেভ থাকে
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('users')) || [];
+        }
+        
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const users = getUsers();
+            
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                if (user.isApproved) {
+                    // লগইন সফল
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // অ্যাপ্রুভ না
+                    document.getElementById('error').style.display = 'block';
+                    document.getElementById('error').textContent = 'আপনার অ্যাকাউন্ট অনুমোদিত হয়নি!';
+                }
+            } else {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'ভুল ইউজারনেম বা পাসওয়ার্ড!';
+            }
+        });
+        
+        // চেক করা যে কোনো মেসেজ দেখানো আছে কিনা
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('registered') === 'success') {
+            document.getElementById('success').style.display = 'block';
+            document.getElementById('success').textContent = 'রেজিস্ট্রেশন সফল! অ্যাডমিন অ্যাপ্রুভ করলে লগইন করতে পারবেন।';
+        }
+    </script>
+</body>
+                        </html>
