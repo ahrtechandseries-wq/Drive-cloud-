@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveHub - আপনার ভিডিও শেয়ারিং প্ল্যাটফর্ম</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .navbar {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .logo { font-size: 24px; font-weight: bold; }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .nav-links a:hover { background: rgba(255,255,255,0.2); }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .hero {
+            text-align: center;
+            color: white;
+            padding: 60px 20px;
+        }
+        .hero h1 { font-size: 48px; margin-bottom: 20px; }
+        .hero p { font-size: 18px; opacity: 0.9; margin-bottom: 30px; }
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+        }
+        .search-box button {
+            padding: 15px 30px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .search-box button:hover { background: #ff5252; }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+        .feature-card:hover { transform: translateY(-5px); }
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .feature-card h3 { margin-bottom: 15px; color: #333; }
+        .feature-card p { color: #666; }
+        .latest-videos {
+            margin-top: 80px;
+        }
+        .section-title {
+            color: white;
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .video-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .video-card:hover { transform: scale(1.05); }
+        .video-thumbnail {
+            height: 160px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+        }
+        .video-info {
+            padding: 15px;
+        }
+        .video-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .video-meta {
+            color: #666;
+            font-size: 14px;
+        }
+        .footer {
+            background: rgba(0,0,0,0.2);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 60px;
+        }
+        @media (max-width: 768px) {
+            .navbar { flex-direction: column; gap: 10px; }
+            .hero h1 { font-size: 32px; }
+            .search-box { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">🎬 DriveHub</div>
+        <div class="nav-links">
+            <a href="index.html">হোম</a>
+            <a href="videos.html">ভিডিও</a>
+            <a href="upload.html">আপলোড</a>
+            <a href="login.html">লগইন</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>DriveHub-এ স্বাগতম</h1>
+            <p>আপনার প্রিয় ভিডিও শেয়ার করুন, দেখুন এবং ডাউনলোড করুন সম্পূর্ণ ফ্রিতে</p>
+            <div class="search-box">
+                <input type="text" placeholder="ভিডিও সার্চ করুন...">
+                <button>🔍 সার্চ</button>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🎥</div>
+                <h3>ভিডিও স্ট্রিমিং</h3>
+                <p>হাই কোয়ালিটিতে ভিডিও দেখুন স্মুথ স্ট্রিমিং-এ</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📥</div>
+                <h3>ডাউনলোড</h3>
+                <p>যেকোনো ভিডিও ডাউনলোড করুন এক ক্লিকে</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3>এম্বেড অপশন</h3>
+                <p>অন্য ওয়েবসাইটে ভিডিও এম্বেড করুন</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>মোবাইল ফ্রেন্ডলি</h3>
+                <p>যেকোনো ডিভাইস থেকে দেখুন</p>
+            </div>
+        </div>
+
+        <div class="latest-videos">
+            <h2 class="section-title">সর্বশেষ ভিডিও</h2>
+            <div class="video-grid" id="videoGrid">
+                <!-- JavaScript দিয়ে ভিডিও লোড হবে -->
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2026 DriveHub - সর্বস্বত্ব সংরক্ষিত</p>
+    </div>
+
+    <script>
+        // লোকাল স্টোরেজ থেকে ভিডিও ডাটা লোড
+        function loadVideos() {
+            const videos = JSON.parse(localStorage.getItem('videos')) || [];
+            const grid = document.getElementById('videoGrid');
+            
+            if (videos.length === 0) {
+                // ডেমো ভিডিও দেখান
+                const demoVideos = [
+                    { name: 'Jujutsu Kaisen S03E05', size: '308.8 MB', token: 'demo1' },
+                    { name: 'Jujutsu Kaisen S03E06', size: '298.5 MB', token: 'demo2' },
+                    { name: 'Jujutsu Kaisen S03E07', size: '312.2 MB', token: 'demo3' }
+                ];
+                
+                demoVideos.forEach(video => {
+                    addVideoCard(grid, video);
+                });
+            } else {
+                videos.forEach(video => {
+                    addVideoCard(grid, video);
+                });
+            }
+        }
+        
+        function addVideoCard(grid, video) {
+            const card = document.createElement('div');
+            card.className = 'video-card';
+            card.onclick = () => {
+                window.location.href = `player.html?token=${video.token}`;
+            };
+            
+            card.innerHTML = `
+                <div class="video-thumbnail">🎬</div>
+                <div class="video-info">
+                    <div class="video-title">${video.name}</div>
+                    <div class="video-meta">${video.size} | HD</div>
+                </div>
+            `;
+            
+            grid.appendChild(card);
+        }
+        
+        loadVideos();
+    </script>
+</body>
+  </html>
