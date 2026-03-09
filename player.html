@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্লেয়ার - DriveHub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body {
+            background: #000;
+            color: #fff;
+        }
+        .navbar {
+            background: #111;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        .logo { color: #667eea; font-size: 24px; font-weight: bold; }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+        .nav-links a:hover { background: #333; }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            margin-bottom: 30px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .video-info {
+            background: #111;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #fff;
+            margin-bottom: 15px;
+        }
+        .meta {
+            display: flex;
+            gap: 20px;
+            color: #aaa;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .description {
+            color: #ddd;
+            line-height: 1.6;
+        }
+        .actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .btn-secondary {
+            background: #333;
+            color: white;
+        }
+        .btn-secondary:hover { background: #444; }
+        .embed-section {
+            background: #111;
+            padding: 25px;
+            border-radius: 10px;
+        }
+        h3 {
+            color: #fff;
+            margin-bottom: 15px;
+        }
+        .embed-code {
+            background: #222;
+            padding: 15px;
+            border-radius: 5px;
+            color: #00ff00;
+            font-family: monospace;
+            word-break: break-all;
+            margin-bottom: 15px;
+        }
+        textarea {
+            width: 100%;
+            padding: 15px;
+            background: #222;
+            color: #0f0;
+            border: 1px solid #333;
+            border-radius: 5px;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+        .not-found {
+            text-align: center;
+            padding: 50px;
+            background: #111;
+            border-radius: 10px;
+        }
+        .not-found a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">🎬 DriveHub প্লেয়ার</div>
+        <div class="nav-links">
+            <a href="index.html">হোম</a>
+            <a href="videos.html">ভিডিও</a>
+            <a href="upload.html">আপলোড</a>
+        </div>
+    </div>
+
+    <div class="container" id="playerContainer">
+        <!-- JavaScript দিয়ে কন্টেন্ট লোড হবে -->
+    </div>
+
+    <script>
+        function getVideoFromToken() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            if (!token) {
+                showNotFound();
+                return;
+            }
+            
+            const videos = JSON.parse(localStorage.getItem('videos')) || [];
+            const video = videos.find(v => v.token === token);
+            
+            if (!video) {
+                showNotFound();
+                return;
+            }
+            
+            // ভিউ আপডেট করুন
+            video.views = (video.views || 0) + 1;
+            localStorage.setItem('videos', JSON.stringify(videos));
+            
+            // এম্বেড লিংক
+            const embedUrl = `https://drive.google.com/file/d/${video.driveId}/preview`;
+            
+            document.getElementById('playerContainer').innerHTML = `
+                <h2>${video.name}</h2>
+                
+                <div class="video-wrapper">
+                    <iframe src="${embedUrl}" allowfullscreen></iframe>
+                </div>
+                
+                <div class="video-info">
+                    <div class="meta">
+                        <span>📊 সাইজ: ${video.size}</span>
+                        <span>👁️ ভিউ: ${video.views}</span>
+                        <span>📅 ${new Date(video.uploadedAt).toLocaleDateString('bn-BD')}</span>
+                    </div>
+                    
+                    ${video.description ? `<div class="description">${video.description}</div>` : ''}
+                    
+                    <div class="actions">
+                        <button class="btn btn-primary" onclick="downloadVideo('${video.driveId}', '${video.name}')">
+                            📥 ডাউনলোড
+                        </button>
+                        <button class="btn btn-secondary" onclick="shareTelegram('${token}')">
+                            📱 টেলিগ্রামে শেয়ার
+                        </button>
+                        <button class="btn btn-secondary" onclick="copyEmbedCode('${token}')">
+                            🔗 এম্বেড কোড কপি
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="embed-section">
+                    <h3>📋 এম্বেড কোড</h3>
+                    <textarea readonly rows="3" onclick="this.select()" id="embedCode"><iframe width="100%" height="400" src="${window.location.origin}/embed.html?token=${token}" frameborder="0" allowfullscreen></iframe></textarea>
+                    
+                    <div class="embed-code" id="directLink">${window.location.origin}/embed.html?token=${token}</div>
+                </div>
+            `;
+        }
+        
+        function showNotFound() {
+            document.getElementById('playerContainer').innerHTML = `
+                <div class="not-found">
+                    <h2>❌ ভিডিও পাওয়া যায়নি</h2>
+                    <p>ভুল টোকেন বা ভিডিও ডিলিট হয়ে গেছে।</p>
+                    <a href="index.html">হোম পেজে ফিরুন</a>
+                </div>
+            `;
+        }
+        
+        function downloadVideo(driveId, name) {
+            window.open(`https://drive.google.com/uc?export=download&id=${driveId}`, '_blank');
+        }
+        
+        function shareTelegram(token) {
+            const url = `${window.location.origin}/player.html?token=${token}`;
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}`, '_blank');
+        }
+        
+        function copyEmbedCode(token) {
+            const embedCode = `<iframe width="100%" height="400" src="${window.location.origin}/embed.html?token=${token}" frameborder="0" allowfullscreen></iframe>`;
+            navigator.clipboard.writeText(embedCode).then(() => {
+                alert('✅ এম্বেড কোড কপি হয়েছে!');
+            });
+        }
+        
+        getVideoFromToken();
+    </script>
+</body>
+  </html>
