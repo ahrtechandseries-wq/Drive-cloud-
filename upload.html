@@ -68,4 +68,167 @@
         button {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg,
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        .login-message {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+        }
+        .login-message a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">📤 DriveHub আপলোড</div>
+        <div class="nav-links">
+            <a href="index.html">হোম</a>
+            <a href="videos.html">ভিডিও</a>
+            <a href="dashboard.html">ড্যাশবোর্ড</a>
+            <a href="logout.html">লগআউট</a>
+        </div>
+    </div>
+
+    <div class="container" id="uploadContainer">
+        <!-- JavaScript দিয়ে কন্টেন্ট লোড হবে -->
+    </div>
+
+    <script>
+        function checkLogin() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!currentUser || !currentUser.isApproved) {
+                document.getElementById('uploadContainer').innerHTML = `
+                    <div class="login-message">
+                        <h2>⛔ অ্যাক্সেস ডিনাইড</h2>
+                        <p>ভিডিও আপলোড করতে লগইন করে অ্যাপ্রুভ হতে হবে।</p>
+                        <a href="login.html">লগইন পেজে যান</a>
+                    </div>
+                `;
+                return false;
+            }
+            return true;
+        }
+        
+        function loadUploadForm() {
+            if (!checkLogin()) return;
+            
+            document.getElementById('uploadContainer').innerHTML = `
+                <div class="upload-box">
+                    <h2>📹 নতুন ভিডিও আপলোড</h2>
+                    
+                    <div class="input-group">
+                        <label>ভিডিওর নাম *</label>
+                        <input type="text" id="videoName" placeholder="যেমন: Jujutsu Kaisen S03E05" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>ভিডিওর সাইজ (MB) *</label>
+                        <input type="number" step="0.01" id="videoSize" placeholder="যেমন: 308.8" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>গুগল ড্রাইভ লিংক *</label>
+                        <input type="url" id="driveLink" placeholder="https://drive.google.com/file/d/..." required>
+                        <small style="color: #666; margin-top: 5px; display: block;">শুধু গুগল ড্রাইভের শেয়ারেবল লিংক দিন</small>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>ভিডিওর বিবরণ (ঐচ্ছিক)</label>
+                        <textarea id="description" rows="3" placeholder="ভিডিও সম্পর্কে কিছু বলুন..."></textarea>
+                    </div>
+                    
+                    <button onclick="uploadVideo()">📤 আপলোড করুন</button>
+                    
+                    <div class="info">
+                        <strong>ℹ️ মনে রাখবেন:</strong>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>শুধুমাত্র অ্যাপ্রুভড ইউজার আপলোড করতে পারেন</li>
+                            <li>গুগল ড্রাইভ লিংক পাবলিক হতে হবে</li>
+                            <li>ভিডিও ২GB এর কম হতে হবে</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function uploadVideo() {
+            const name = document.getElementById('videoName').value;
+            const size = document.getElementById('videoSize').value;
+            const link = document.getElementById('driveLink').value;
+            const description = document.getElementById('description').value;
+            
+            if (!name || !size || !link) {
+                alert('সব ফিল্ড পূরণ করুন!');
+                return;
+            }
+            
+            // গুগল ড্রাইভ আইডি এক্সট্রাক্ট করুন
+            const driveIdMatch = link.match(/[-\w]{25,}/);
+            if (!driveIdMatch) {
+                alert('সঠিক গুগল ড্রাইভ লিংক দিন!');
+                return;
+            }
+            
+            const driveId = driveIdMatch[0];
+            
+            // টোকেন জেনারেট করুন
+            const token = generateToken();
+            
+            // ভিডিও ডাটা সেভ করুন
+            const videos = JSON.parse(localStorage.getItem('videos')) || [];
+            const newVideo = {
+                id: Date.now(),
+                name: name,
+                size: size + ' MB',
+                driveId: driveId,
+                token: token,
+                description: description,
+                uploadedBy: JSON.parse(localStorage.getItem('currentUser')).username,
+                uploadedAt: new Date().toISOString(),
+                views: 0
+            };
+            
+            videos.push(newVideo);
+            localStorage.setItem('videos', JSON.stringify(videos));
+            
+            alert('✅ ভিডিও সফলভাবে আপলোড হয়েছে!');
+            window.location.href = 'videos.html';
+        }
+        
+        function generateToken() {
+            return 'vid_' + Math.random().toString(36).substr(2, 16);
+        }
+        
+        loadUploadForm();
+    </script>
+</body>
+    </html>
