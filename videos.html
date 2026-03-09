@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ভিডিও - DriveHub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body {
+            background: #f5f5f5;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 24px; font-weight: bold; }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+        .nav-links a:hover { background: rgba(255,255,255,0.2); }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .video-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .video-thumb {
+            height: 160px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+        }
+        .video-info {
+            padding: 15px;
+        }
+        .video-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .video-meta {
+            color: #666;
+            font-size: 14px;
+        }
+        .no-videos {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 10px;
+        }
+        .no-videos a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">🎬 DriveHub ভিডিও</div>
+        <div class="nav-links">
+            <a href="index.html">হোম</a>
+            <a href="upload.html">আপলোড</a>
+            <a href="login.html">লগইন</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>📺 সব ভিডিও</h2>
+        
+        <div class="video-grid" id="videoGrid">
+            <!-- JavaScript দিয়ে ভিডিও লোড হবে -->
+        </div>
+    </div>
+
+    <script>
+        function loadVideos() {
+            const videos = JSON.parse(localStorage.getItem('videos')) || [];
+            const grid = document.getElementById('videoGrid');
+            
+            if (videos.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-videos">
+                        <h3>কোনো ভিডিও নেই</h3>
+                        <p>প্রথম ভিডিও আপলোড করুন</p>
+                        <a href="upload.html">ভিডিও আপলোড</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = '';
+            
+            videos.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+            
+            videos.forEach(video => {
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.onclick = () => {
+                    window.location.href = `player.html?token=${video.token}`;
+                };
+                
+                card.innerHTML = `
+                    <div class="video-thumb">🎬</div>
+                    <div class="video-info">
+                        <div class="video-title">${video.name}</div>
+                        <div class="video-meta">${video.size} | ${video.views || 0} ভিউ</div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        loadVideos();
+    </script>
+</body>
+  </html>
