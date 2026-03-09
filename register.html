@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>রেজিস্টার - DriveHub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .register-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 450px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>📝 DriveHub রেজিস্টার</h2>
+        
+        <div class="error" id="error"></div>
+        
+        <form id="registerForm">
+            <div class="input-group">
+                <label>ইউজারনেম</label>
+                <input type="text" id="username" required>
+            </div>
+            
+            <div class="input-group">
+                <label>ইমেইল</label>
+                <input type="email" id="email" required>
+            </div>
+            
+            <div class="input-group">
+                <label>পাসওয়ার্ড</label>
+                <input type="password" id="password" required>
+            </div>
+            
+            <div class="input-group">
+                <label>কনফার্ম পাসওয়ার্ড</label>
+                <input type="password" id="confirmPassword" required>
+            </div>
+            
+            <button type="submit">রেজিস্টার</button>
+        </form>
+        
+        <div class="login-link">
+            ইতিমধ্যে অ্যাকাউন্ট আছে? <a href="login.html">লগইন করুন</a>
+        </div>
+    </div>
+
+    <script>
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('users')) || [];
+        }
+        
+        function saveUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+        
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // ভ্যালিডেশন
+            if (password !== confirmPassword) {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'পাসওয়ার্ড মিলছে না!';
+                return;
+            }
+            
+            if (password.length < 6) {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে!';
+                return;
+            }
+            
+            const users = getUsers();
+            
+            // চেক ডুপ্লিকেট
+            if (users.some(u => u.username === username)) {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'এই ইউজারনেম ইতিমধ্যে আছে!';
+                return;
+            }
+            
+            if (users.some(u => u.email === email)) {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'এই ইমেইল ইতিমধ্যে আছে!';
+                return;
+            }
+            
+            // নতুন ইউজার যোগ করুন
+            const newUser = {
+                id: Date.now(),
+                username: username,
+                email: email,
+                password: password,
+                isApproved: false,
+                isAdmin: false,
+                registeredAt: new Date().toISOString()
+            };
+            
+            users.push(newUser);
+            saveUsers(users);
+            
+            // লগইন পেজে রিডাইরেক্ট
+            window.location.href = 'login.html?registered=success';
+        });
+    </script>
+</body>
+              </html>
