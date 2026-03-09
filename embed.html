@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DriveHub এম্বেড</title>
+    <style>
+        body { margin: 0; padding: 0; background: #000; }
+        .embed-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+        }
+        .embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .error {
+            color: white;
+            text-align: center;
+            padding: 50px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="embedContainer" class="embed-container">
+        <p class="error">লোড হচ্ছে...</p>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        
+        if (token) {
+            const videos = JSON.parse(localStorage.getItem('videos')) || [];
+            const video = videos.find(v => v.token === token);
+            
+            if (video) {
+                const embedUrl = `https://drive.google.com/file/d/${video.driveId}/preview`;
+                document.getElementById('embedContainer').innerHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
+            } else {
+                document.getElementById('embedContainer').innerHTML = '<p class="error">ভিডিও পাওয়া যায়নি</p>';
+            }
+        } else {
+            document.getElementById('embedContainer').innerHTML = '<p class="error">টোকেন প্রদান করুন</p>';
+        }
+    </script>
+</body>
+</html>
